@@ -1,0 +1,54 @@
+<head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>
+                var pl_url = "http://pics.dmm.co.jp/digital/video/%s/%spl.jpg";
+                var pic_url = "http://pics.dmm.co.jp/digital/video/%s/%sjp-%d.jpg";
+                var img = $("<img>");
+                var div = $("<div></div>");
+                var a = $("<a></a>");
+                $(document).ready(function() {
+                        $("#btn").click(function() {
+                                if ($("#code").val().match(/[^\d]\d{3}$/g)) {
+                                        $("#code").val($("#code").val().replace(/(\d{3})/, "00$1"));
+                                }
+
+                                $("#container").html("");
+
+                                var pl_img = img.clone();
+                                pl_img.attr("src", pl_url.replace(/%s/g, $("#code").val()));
+                                var pl_a = a.clone();
+                                pl_a.attr("href", pl_img.attr("src"));
+                                pl_a.attr("download", $("#code").val().replace(/^\d*/, "").replace(/00(\d{3})/g,"$1")+"pl.jpg");
+                                pl_a.append(pl_img);
+                                var pl_div = div.clone();
+                                pl_div.append(pl_a);
+                                $("#container").append(pl_div);
+
+                                var i = 1;
+                                var load_img = function() {
+                                        var pic_img = img.clone();
+                                        pic_img.attr("src", pic_url.replace(/%s/g, $("#code").val()).replace(/%d/, i));
+                                        pic_img.load(function() {
+                                                if (this.width > 200 && this.height > 200) {
+                                                        var pic_a = a.clone();
+                                                        pic_a.attr("href", this.src);
+                                                        pic_a.attr("download", $("#code").val().replace(/^\d*/, "").replace(/00(\d{3})/g,"$1")+(i>=10?"-":"-0")+i+".jpg");
+                                                        pic_a.append(pic_img);
+                                                        var pic_div = div.clone();
+                                                        pic_div.append(pic_a);
+                                                        $("#container").append(pic_div);
+                                                        i++;
+                                                        load_img();
+                                                }
+                                        });
+                                };
+                                load_img();
+                        });
+                });
+        </script>
+</head>
+<body>
+        <input type="text" id="code" /><button id="btn">load</button>
+        <div id="container"></div>
+        <a href="#"><h2>back to top</h2></a>
+</body>
