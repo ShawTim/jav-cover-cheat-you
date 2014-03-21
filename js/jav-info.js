@@ -9,12 +9,14 @@
 	$.fn.jav_info = function(options) {
 
 		options = $.extend({
-			btn: "#btn",
+			load: "#load_btn",
+			prev: "#prev_btn",
+			next: "#next_btn",
 			code: "#code",
 			container: "#container"
 		}, options);
 
-		$(options.btn).click(function() {
+		$(options.load).click(function() {
 			if ($(options.code).val().match(/[^\d]\d{3}$/g)) {
 				$(options.code).val($(options.code).val().replace(/(\d{3})$/, "00$1"));
 			}
@@ -52,6 +54,27 @@
 			};
 			load_img();
 		});
+
+var prev_next = function(isPrev) {
+  var code = $(options.code).val();
+  if (code.match(/[^\d]\d{5}$/)) {
+    var code_num = code.replace(/.*(\d{3})$/, "$1") - 0;
+    if (isPrev) {
+      code_num = ((code_num + 999) + "").substr(-3);
+    } else {
+      code_num = ((code_num + 1001) + "").substr(-3);
+    }
+    $(options.code).val(code.replace(/\d{3}$/, code_num));
+    $(options.load).click();
+  }
+};
+      
+      $(options.prev).click(function() {
+        prev_next(true);
+      });
+      $(options.next).click(function() {
+        prev_next(false);
+      });
 		
 		return this;
 	};
